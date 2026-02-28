@@ -3,8 +3,10 @@ import styles from './page.module.scss'
 
 export default function Home() {
   return (
-    <div>
-      
+    <div className={styles.mainGridWrapper}>
+      <nav></nav>
+      <main></main>
+      <nav></nav>
     </div>
   );
 }
