@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className={styles.mainGridWrapper}>
       <LeftNavBar />
-      <main></main>
+      <main className={styles.mainContent}></main>
       <RightFeedBar />
     </div>
   );
