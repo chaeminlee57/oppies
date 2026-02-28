@@ -1,10 +1,11 @@
 import Image from "next/image";
 import styles from './page.module.scss'
+import LeftNavBar from "@/components/LeftNavBar";
 
 export default function Home() {
   return (
     <div className={styles.mainGridWrapper}>
-      <nav></nav>
+      <LeftNavBar />
       <main></main>
       <nav></nav>
     </div>
