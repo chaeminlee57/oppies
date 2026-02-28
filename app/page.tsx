@@ -1,55 +1,10 @@
 import Image from "next/image";
+import styles from './page.module.scss'
 
 export default function Home() {
   return (
     <div>
-      <main>
-        <Image
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div>
-          <h1>
-            To get started, edit the page.tsx file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a href="https://vercel.com/templates?framework=next.js">
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a href="https://nextjs.org/learn">
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div>
-          <a
-            href="https://vercel.com/new"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          
-            href="https://nextjs.org/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-          <a>
-            Documentation
-          </a>
-        </div>
-      </main>
+      
     </div>
   );
 }
