@@ -1,8 +1,9 @@
 import styles from './LeftNavBar.module.scss'
+import { playfairDisplay } from '../app/fonts';
 
 export default function LeftNavBar() {
   return(
-    <nav className={styles.navWrapper}>
+    <nav className={`${styles.navWrapper} ${playfairDisplay.variable}`}>
       <a href="#" className={styles.navLink}><h2 className={styles.navItem}>Home</h2></a>
       <a href="#" className={styles.navLink}><h2 className={styles.navItem}>Feed</h2></a>
       <a href="#" className={styles.navLink}><h2 className={styles.navItem}>Write</h2></a>

@@ -3,6 +3,18 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.scss";
 import { satoshi } from "./fonts";
 import Header from "@/components/Header";
+import { Inter } from 'next/font/google';
+import { Cormorant } from 'next/font/google';
+
+const cormorant = Cormorant({
+  subsets: ['latin'],
+  variable: '--font-cormorant',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
