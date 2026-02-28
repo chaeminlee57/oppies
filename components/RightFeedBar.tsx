@@ -1,3 +1,5 @@
+'use client'
+
 import styles from './RightFeedBar.module.scss'
 
 export default function RightFeedBar() {
