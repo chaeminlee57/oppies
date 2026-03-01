@@ -1,6 +1,12 @@
 .headerWrapper {
   display: flex;
   justify-content: center;
+  z-index: 1000;
+  width: 100vw;
+  height: 10vh;
+  position: fixed;
+  top: 0;
+  background: #fffded; 
 }
 
 .websiteName {
