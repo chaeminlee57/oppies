@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import styles from './WriteBox.module.scss'
 import { satoshi } from '../app/fonts'
-import Typewriter from "./Typewriter";
 
 export default function WriteBox() {
   const [lines, setLines] = useState<string[]>([]);
@@ -14,7 +13,6 @@ export default function WriteBox() {
     const el = editableRef.current;
     if (!el) return;
     el.textContent += char;
-    // trigger the same overflow logic
     handleInput({ currentTarget: el } as any);
   };
 
@@ -29,7 +27,6 @@ export default function WriteBox() {
       setLines(prev => prev.slice(0, -1));
       el.textContent = prevLine;
     }
-    // move cursor to end
     const range = document.createRange();
     const sel = window.getSelection();
     range.selectNodeContents(el);
@@ -50,7 +47,6 @@ export default function WriteBox() {
     const el = editableRef.current;
     if (!el) return;
   
-  // detect the last typed character and flash it
   const newText = el.textContent || '';
   const lastChar = newText.slice(-1).toUpperCase();
   setPressedKey(lastChar);
@@ -107,9 +103,6 @@ export default function WriteBox() {
           className={styles.textArea}
           onInput={handleInput}
         />
-      </div>
-      <div style={{ position: 'fixed', top: 'calc(50% + 5em)', left: '50%', transform: 'translateX(-50%)' }}>
-      <Typewriter onKey={handleKey} onBackspace={handleBackspace} onReturn={handleReturn} pressedKey={pressedKey} />
       </div>
     </>
   )
