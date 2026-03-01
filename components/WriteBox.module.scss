@@ -16,10 +16,16 @@
   gap: 4px;
 }
 
+.paragraph {
+  width: 40vw;
+  text-align: left;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
 .completedLine {
   font-size: 1rem;
-  line-height: 1.5;
-  text-align: center;
+  display: inline;
 }
 
 .textArea {

@@ -2,31 +2,12 @@
 
 import { useState, useRef } from "react";
 import styles from './WriteBox.module.scss'
-import { satoshi } from '../app/fonts'
 
 export default function WriteBox() {
-  const [lines, setLines] = useState<string[]>([]);
+  const [paragraphs, setParagraphs] = useState<string[][]>([[]]);
   const editableRef = useRef<HTMLDivElement>(null);
-  const [pressedKey, setPressedKey] = useState<string | null>(null);
 
-  const handleKey = (char: string) => {
-    const el = editableRef.current;
-    if (!el) return;
-    el.textContent += char;
-    handleInput({ currentTarget: el } as any);
-  };
-
-  const handleBackspace = () => {
-    const el = editableRef.current;
-    if (!el) return;
-    const current = el.textContent || '';
-    if (current.length > 0) {
-      el.textContent = current.slice(0, -1);
-    } else if (lines.length > 0) {
-      const prevLine = lines[lines.length - 1];
-      setLines(prev => prev.slice(0, -1));
-      el.textContent = prevLine;
-    }
+  const moveCursorToEnd = (el: HTMLDivElement) => {
     const range = document.createRange();
     const sel = window.getSelection();
     range.selectNodeContents(el);
@@ -39,18 +20,20 @@ export default function WriteBox() {
     const el = editableRef.current;
     if (!el) return;
     const current = el.textContent || '';
-    setLines(prev => [...prev, current]);
+    // seal current paragraph with the last line, start a new empty paragraph
+    setParagraphs(prev => {
+      const updated = [...prev];
+      updated[updated.length - 1] = [...updated[updated.length - 1], current];
+      updated.push([]);
+      return updated;
+    });
     el.textContent = '';
+    moveCursorToEnd(el);
   };
 
   const handleInput = (e: React.FormEvent<HTMLDivElement> | { currentTarget: HTMLDivElement }) => {
     const el = editableRef.current;
     if (!el) return;
-  
-  const newText = el.textContent || '';
-  const lastChar = newText.slice(-1).toUpperCase();
-  setPressedKey(lastChar);
-  setTimeout(() => setPressedKey(null), 120);
 
     while (el.scrollWidth > el.clientWidth) {
       const fullText = el.textContent || '';
@@ -69,29 +52,40 @@ export default function WriteBox() {
 
       const fittedText = fullText.substring(0, low);
       const remainder = fullText.substring(low);
-      const lastSpace = fittedText.lastIndexOf(' ');
 
-      const completedLine = lastSpace > -1 ? fittedText.substring(0, lastSpace) : fittedText;
-      const leftover = lastSpace > -1 ? fittedText.substring(lastSpace + 1) + remainder : remainder;
+      const completedLine = fittedText;
+      const leftover = remainder;
 
-      setLines(prev => [...prev, completedLine]);
+      setParagraphs(prev => {
+        const updated = [...prev];
+        updated[updated.length - 1] = [...updated[updated.length - 1], completedLine];
+        return updated;
+      });
       el.textContent = leftover;
     }
 
-    const range = document.createRange();
-    const sel = window.getSelection();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    sel?.removeAllRanges();
-    sel?.addRange(range);
+    moveCursorToEnd(el);
   };
 
-  return(
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleReturn();
+    }
+  };
+
+  return (
     <>
       <div className={styles.boxWrapper}>
         <div className={styles.linesWrapper}>
-          {lines.map((line, index) => (
-            <div key={index} className={styles.completedLine}>{line}</div>
+          {paragraphs.map((paragraph, pIndex) => (
+            <div key={pIndex} className={styles.paragraph}>
+              {paragraph.map((line, lIndex) => (
+                <span key={lIndex} className={styles.completedLine}>
+                  {line}{' '}
+                </span>
+              ))}
+            </div>
           ))}
         </div>
         <div
@@ -102,8 +96,9 @@ export default function WriteBox() {
           data-placeholder="What are your thoughts right now?"
           className={styles.textArea}
           onInput={handleInput}
+          onKeyDown={handleKeyDown}
         />
       </div>
     </>
-  )
+  );
 }
