@@ -1,6 +1,7 @@
 .feedWrapper {
   display: grid;
   grid-template-rows: 1fr 5fr;
+  border-left: 1px solid rgb(196, 196, 196);
   .feedTitle {
     justify-self: center;
     align-self: center;
@@ -22,8 +23,8 @@
       text-align: center;
     }
     .feedTitle {
-      font-size: 1em;
-      padding: 4px 8px;
+      font-size: 0.8em;
+      padding: 8px 20px;
     }
   }
 }

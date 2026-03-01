@@ -102,6 +102,7 @@ export default function WriteBox() {
           ref={editableRef}
           contentEditable
           suppressContentEditableWarning
+          autoFocus
           data-placeholder="What are your thoughts right now?"
           className={styles.textArea}
           onInput={handleInput}
