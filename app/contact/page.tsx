@@ -1,7 +1,15 @@
+import Image from "next/image";
+import styles from "./page.module.scss";
+import LeftNavBar from "@/components/LeftNavBar";
+import RightFeedBar from "@/components/RightFeedBar";
+import WriteBox from "@/components/WriteBox";
+
 export default function Contact() {
-  return(
-    <div>
-      Contact
-    </div>
-  )
+  return (
+    <>
+      <LeftNavBar />
+      <WriteBox />
+      <RightFeedBar />
+    </>
+  );
 }
