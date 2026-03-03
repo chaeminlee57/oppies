@@ -24,7 +24,7 @@
       text-align: center;
     }
     .feedTitle {
-      font-size: 0.8em;
+      font-size: clamp(0.7rem, 1.5vw, 1.5rem);
       padding: 8px 20px;
     }
   }
