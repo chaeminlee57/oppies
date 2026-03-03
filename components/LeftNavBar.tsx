@@ -1,15 +1,46 @@
-import styles from './LeftNavBar.module.scss'
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+import styles from './LeftNavBar.module.scss';
 import { playfairDisplay } from '../app/fonts';
 import { House, Newspaper, PenLine, User, Mail } from 'lucide-react';
 
+const navItems = [
+  { href: '/', icon: House, label: 'Home' },
+  { href: '/news', icon: Newspaper, label: 'News' },
+  { href: '/writing', icon: PenLine, label: 'Writing' },
+  { href: '/about', icon: User, label: 'About' },
+  { href: '/contact', icon: Mail, label: 'Contact' },
+];
+
 export default function LeftNavBar() {
-  return(
+  const pathname = usePathname();
+
+  return (
     <nav className={`${styles.navWrapper} ${playfairDisplay.variable}`}>
-      <a href="#" className={styles.navLink}><House className={styles.navItem} /></a>
-      <a href="#" className={styles.navLink}><Newspaper className={styles.navItem} /></a>
-      <a href="#" className={styles.navLink}><PenLine className={styles.navItem} /></a>
-      <a href="#" className={styles.navLink}><User className={styles.navItem} /></a>
-      <a href="#" className={styles.navLink}><Mail className={styles.navItem} /></a>
+      {navItems.map(({ href, icon: Icon, label }) => {
+        const isActive = pathname === href;
+
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={`${styles.navLink} ${isActive ? styles.active : ''}`}
+            aria-label={label}
+          >
+            {isActive && (
+              <motion.span
+                layoutId="activeNavIndicator"
+                className={styles.activeBackground}
+                transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+              />
+            )}
+            <Icon className={styles.navItem} strokeWidth={1.8} />
+          </Link>
+        );
+      })}
     </nav>
-  )
+  );
 }

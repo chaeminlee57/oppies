@@ -1,22 +1,49 @@
 .navWrapper {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
   min-height: 70vh;
   padding-top: 10vh;
   width: 5vw;
+  min-width: 72px;
   justify-content: center;
   align-items: center;
   border-right: 1px solid rgb(196, 196, 196);
-
-  .navLink {
-    text-decoration: none;
-    color: black;
-  }
-  
-  .navItem {
-    list-style: none;
-    text-align: center;
-    font-weight: 500;
-  }
 }
 
+.navLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: black;
+  transition: color 0.25s ease, transform 0.2s ease;
+}
+
+.navLink:hover {
+  transform: translateY(-1px);
+}
+
+.activeBackground {
+  position: absolute;
+  inset: 0;
+  background: #1f1f1f;
+  border-radius: 14px;
+  z-index: 0;
+}
+
+.navItem {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  color: #222;
+  transition: color 0.25s ease;
+}
+
+.active .navItem {
+  color: white;
+}
