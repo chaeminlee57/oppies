@@ -9,8 +9,8 @@ import { House, Newspaper, PenLine, User, Mail } from 'lucide-react';
 
 const navItems = [
   { href: '/', icon: House, label: 'Home' },
-  { href: '/news', icon: Newspaper, label: 'News' },
-  { href: '/writing', icon: PenLine, label: 'Writing' },
+  { href: '/feed', icon: Newspaper, label: 'Feed' },
+  { href: '/write', icon: PenLine, label: 'Write' },
   { href: '/about', icon: User, label: 'About' },
   { href: '/contact', icon: Mail, label: 'Contact' },
 ];
