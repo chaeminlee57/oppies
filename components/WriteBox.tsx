@@ -7,6 +7,7 @@ export default function WriteBox() {
   const [paragraphs, setParagraphs] = useState<string[][]>([[]]);
   const [editingPIndex, setEditingPIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
+  const [insertedPIndex, setInsertedPIndex] = useState<number | null>(null);
   const editableRef = useRef<HTMLDivElement>(null);
 
   const moveCursorToEnd = (el: HTMLDivElement) => {
@@ -72,92 +73,110 @@ export default function WriteBox() {
     }
   };
 
-  const handlePencilClick = (pIndex: number) => {
-    const fullText = paragraphs[pIndex].join(' ');
-    setEditingPIndex(pIndex);
+  const handlePencilClick = (realPIndex: number) => {
+    const fullText = paragraphs[realPIndex].join(' ');
+    setEditingPIndex(realPIndex);
     setEditingValue(fullText);
   };
 
-  const handleEditSave = () => {
-    if (editingPIndex === null) return;
+  const handleAddParagraph = (realPIndex: number) => {
     setParagraphs(prev => {
       const updated = [...prev];
-      updated[editingPIndex] = [editingValue];
+      updated.splice(realPIndex + 1, 0, [' ']);
       return updated;
     });
-    setEditingPIndex(null);
+    setInsertedPIndex(realPIndex + 1);
+    setEditingPIndex(realPIndex + 1);
     setEditingValue('');
   };
 
-  const handleEditKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleEditSave();
-    if (e.key === 'Escape') {
-      setEditingPIndex(null);
-      setEditingValue('');
-    }
+  const handleDeleteParagraph = (realPIndex: number) => {
+    setParagraphs(prev => {
+      const updated = prev.filter((_, i) => i !== realPIndex);
+      return updated.length > 0 ? updated : [[]];
+    });
   };
 
   return (
     <>
       <div className={styles.boxWrapper}>
         <div className={styles.linesWrapper}>
-          {paragraphs.filter(paragraph => paragraph.length > 0).map((paragraph, pIndex) => (
-            <div key={pIndex} className={styles.paragraphWrapper}>
-              <div className={styles.paragraph}>
-              {editingPIndex === pIndex ? (
-                <div
-                  contentEditable
-                  suppressContentEditableWarning
-                  className={styles.editContentEditable}
-                  onBlur={e => {
-                    const text = e.currentTarget.textContent || '';
-                    setParagraphs(prev => {
-                      const updated = [...prev];
-                      updated[editingPIndex!] = [text];
-                      return updated;
-                    });
-                    setEditingPIndex(null);
-                  }}
-                  onKeyDown={e => {
-                    if (e.key === 'Escape') {
-                      const text = e.currentTarget.textContent || '';
-                      setParagraphs(prev => {
-                        const updated = [...prev];
-                        updated[editingPIndex!] = [text];
-                        return updated;
-                      });
-                      setEditingPIndex(null);
-                      setEditingValue('');
-                    }
-                  }}
-                  ref={el => { 
-                    if (el && editingPIndex === pIndex) { 
-                      el.textContent = editingValue; 
-                      el.focus(); 
-                    }
-                  }}
-                />
-              ) : (
-                paragraph.map((line, lIndex) => (
-                  <span key={lIndex} className={styles.completedLine}>
-                    {line}{' '}
-                  </span>
-                ))
-              )}
+          {paragraphs.map((paragraph, realPIndex) => {
+            const isInserted = insertedPIndex === realPIndex;
+            if (paragraph.length === 0 || (paragraph[0].trim() === '' && !isInserted)) return null;
+
+            return (
+              <div key={realPIndex} className={styles.paragraphWrapper}>
+                <div className={styles.paragraph}>
+                  {editingPIndex === realPIndex ? (
+                    <div
+                      contentEditable
+                      suppressContentEditableWarning
+                      className={styles.editContentEditable}
+                      onBlur={e => {
+                        const text = e.currentTarget.textContent || '';
+                        setParagraphs(prev => {
+                          const updated = [...prev];
+                          updated[realPIndex] = text.trim() ? [text] : [];
+                          return updated;
+                        });
+                        setEditingPIndex(null);
+                        setInsertedPIndex(null);
+                      }}
+                      onKeyDown={e => {
+                        if (e.key === 'Escape') {
+                          const text = e.currentTarget.textContent || '';
+                          setParagraphs(prev => {
+                            const updated = [...prev];
+                            updated[realPIndex] = text.trim() ? [text] : [];
+                            return updated;
+                          });
+                          setEditingPIndex(null);
+                          setEditingValue('');
+                          setInsertedPIndex(null);
+                        }
+                      }}
+                      ref={el => {
+                        if (el && editingPIndex === realPIndex) {
+                          el.textContent = editingValue;
+                          el.focus();
+                        }
+                      }}
+                    />
+                  ) : (
+                    paragraph.map((line, lIndex) => (
+                      <span key={lIndex} className={styles.completedLine}>
+                        {line}{' '}
+                      </span>
+                    ))
+                  )}
+                </div>
+                <div className={styles.pencilWrapper}>
+                  <img
+                    src="/pencil.png"
+                    alt="Edit"
+                    className={styles.pencilIcon}
+                    onClick={() => handlePencilClick(realPIndex)}
+                  />
+                  <img
+                    src="/add.png"
+                    alt="Add paragraph"
+                    className={styles.pencilIcon}
+                    onClick={() => handleAddParagraph(realPIndex)}
+                  />
+                  <img
+                    src="/delete.png"
+                    alt="Delete paragraph"
+                    className={styles.pencilIcon}
+                    onClick={() => handleDeleteParagraph(realPIndex)}
+                  />
+                  {editingPIndex === realPIndex && (
+                    <span className={styles.editHint}>press esc to save</span>
+                  )}
+                </div>
               </div>
-              <div className={styles.pencilWrapper}>
-                <img
-                  src="/pencil.png"
-                  alt="Edit"
-                  className={styles.pencilIcon}
-                  onClick={() => handlePencilClick(pIndex)}
-                />
-                {editingPIndex === pIndex && (
-                  <span className={styles.editHint}>press esc to save</span>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div
           ref={editableRef}
