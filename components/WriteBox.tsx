@@ -5,6 +5,8 @@ import styles from './WriteBox.module.scss'
 
 export default function WriteBox() {
   const [paragraphs, setParagraphs] = useState<string[][]>([[]]);
+  const [editingPIndex, setEditingPIndex] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState<string>('');
   const editableRef = useRef<HTMLDivElement>(null);
 
   const moveCursorToEnd = (el: HTMLDivElement) => {
@@ -20,7 +22,6 @@ export default function WriteBox() {
     const el = editableRef.current;
     if (!el) return;
     const current = el.textContent || '';
-    // seal current paragraph with the last line, start a new empty paragraph
     setParagraphs(prev => {
       const updated = [...prev];
       updated[updated.length - 1] = [...updated[updated.length - 1], current];
@@ -53,15 +54,12 @@ export default function WriteBox() {
       const fittedText = fullText.substring(0, low);
       const remainder = fullText.substring(low);
 
-      const completedLine = fittedText;
-      const leftover = remainder;
-
       setParagraphs(prev => {
         const updated = [...prev];
-        updated[updated.length - 1] = [...updated[updated.length - 1], completedLine];
+        updated[updated.length - 1] = [...updated[updated.length - 1], fittedText];
         return updated;
       });
-      el.textContent = leftover;
+      el.textContent = remainder;
     }
 
     moveCursorToEnd(el);
@@ -74,17 +72,90 @@ export default function WriteBox() {
     }
   };
 
+  const handlePencilClick = (pIndex: number) => {
+    const fullText = paragraphs[pIndex].join(' ');
+    setEditingPIndex(pIndex);
+    setEditingValue(fullText);
+  };
+
+  const handleEditSave = () => {
+    if (editingPIndex === null) return;
+    setParagraphs(prev => {
+      const updated = [...prev];
+      updated[editingPIndex] = [editingValue];
+      return updated;
+    });
+    setEditingPIndex(null);
+    setEditingValue('');
+  };
+
+  const handleEditKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleEditSave();
+    if (e.key === 'Escape') {
+      setEditingPIndex(null);
+      setEditingValue('');
+    }
+  };
+
   return (
     <>
       <div className={styles.boxWrapper}>
         <div className={styles.linesWrapper}>
-          {paragraphs.map((paragraph, pIndex) => (
-            <div key={pIndex} className={styles.paragraph}>
-              {paragraph.map((line, lIndex) => (
-                <span key={lIndex} className={styles.completedLine}>
-                  {line}{' '}
-                </span>
-              ))}
+          {paragraphs.filter(paragraph => paragraph.length > 0).map((paragraph, pIndex) => (
+            <div key={pIndex} className={styles.paragraphWrapper}>
+              <div className={styles.paragraph}>
+              {editingPIndex === pIndex ? (
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  className={styles.editContentEditable}
+                  onBlur={e => {
+                    const text = e.currentTarget.textContent || '';
+                    setParagraphs(prev => {
+                      const updated = [...prev];
+                      updated[editingPIndex!] = [text];
+                      return updated;
+                    });
+                    setEditingPIndex(null);
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Escape') {
+                      const text = e.currentTarget.textContent || '';
+                      setParagraphs(prev => {
+                        const updated = [...prev];
+                        updated[editingPIndex!] = [text];
+                        return updated;
+                      });
+                      setEditingPIndex(null);
+                      setEditingValue('');
+                    }
+                  }}
+                  ref={el => { 
+                    if (el && editingPIndex === pIndex) { 
+                      el.textContent = editingValue; 
+                      el.focus(); 
+                    }
+                  }}
+                />
+              ) : (
+                paragraph.map((line, lIndex) => (
+                  <span key={lIndex} className={styles.completedLine}>
+                    {line}{' '}
+                  </span>
+                ))
+              )}
+              </div>
+              <div className={styles.pencilWrapper}>
+                <img
+                  src="/pencil.png"
+                  alt="Edit"
+                  className={styles.pencilIcon}
+                  onClick={() => handlePencilClick(pIndex)}
+                />
+                {editingPIndex === pIndex && (
+                  <span className={styles.editHint}>press esc to save</span>
+                )}
+              </div>
             </div>
           ))}
         </div>

@@ -16,6 +16,50 @@
   gap: 4px;
 }
 
+.paragraphWrapper {
+  display: flex;
+  flex-direction: column;
+
+  &:hover .pencilWrapper {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.editContentEditable {
+  width: 100%;
+  outline: none;
+  font: inherit;
+  font-size: 1rem;
+  color: inherit;
+  white-space: normal;
+  word-break: break-word;
+  border-bottom: 1px solid #aaa;
+  min-height: 1em;
+}
+
+.pencilWrapper {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.pencilIcon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.editHint {
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-left: 6px;
+}
+
 .paragraph {
   width: 40vw;
   text-align: left;
