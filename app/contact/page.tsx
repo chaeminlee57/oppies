@@ -6,10 +6,12 @@ import WriteBox from "@/components/WriteBox";
 
 export default function Contact() {
   return (
-    <>
+    <div className={styles.mainGridWrapper}>
       <LeftNavBar />
-      <WriteBox />
+      <main className={styles.mainContent}>
+        <WriteBox />
+      </main>
       <RightFeedBar />
-    </>
+    </div>
   );
 }
